@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Love Letter ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:#f5efe6;
+  color:#3b2f2f;
+  font-family:'Playfair Display',serif;
+  overflow-x:hidden;
+}
+
+/* NAV */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  padding:15px;
+  background:rgba(245,239,230,0.95);
+  text-align:center;
+  z-index:1000;
+}
+nav a{
+  margin:0 15px;
+  text-decoration:none;
+  color:#6b4c3b;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* SECTIONS */
+section{
+  min-height:100vh;
+  padding:120px 12% 60px;
+  display:none;
+  opacity:0;
+  transition:opacity .8s ease;
+}
+section.active{
+  display:block;
+  opacity:1;
+}
+
+h1{
+  font-family:'Great Vibes',cursive;
+  font-size:3.5rem;
+  margin-bottom:20px;
+}
+
+p{font-size:1.1rem;line-height:1.8;}
+
+.card{
+  background:#fffaf3;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.15);
+  margin-top:30px;
+}
+
+button{
+  margin-top:25px;
+  padding:12px 35px;
+  background:#7a4a3c;
+  color:white;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+}
+
+/* hidden notes */
+.hidden-note{
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(-10px);
+  transition:all .8s ease;
+  white-space:pre-line;
+  line-height:2;
+}
+.hidden-note.show{
+  max-height:600px;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* gallery */
+.gallery{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.gallery img{
+  width:250px;
+  border-radius:15px;
+  cursor:pointer;
+}
+
+/* popup */
+.memory-popup{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+.memory-box{
+  background:#fffaf3;
+  padding:35px;
+  border-radius:20px;
+  max-width:400px;
+  text-align:center;
+}
+
+/* hearts */
+.hearts{
+  position:fixed;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.heart{
+  position:absolute;
+  color:#d98c8c;
+  animation:floatUp 8s linear infinite;
+}
+@keyframes floatUp{
+from{transform:translateY(100vh);}
+to{transform:translateY(-10vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts"></div>
+
+<!-- ✅ GITHUB + MOBILE SAFE AUDIO -->
+<audio id="bgMusic" loop playsinline preload="auto">
+  <source src="https://adiiiishere.github.io/blehhh./music.mp3" type="audio/mpeg">
+</audio>
+
+<nav>
+<a onclick="showSection('home')">Cover</a>
+<a onclick="showSection('letters')">Letters</a>
+<a onclick="showSection('gallery')">Memories</a>
+<a onclick="showSection('video')">Video</a>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="active">
+<h1>My Dearest Love</h1>
+<div class="card">
+<p>This is not just a website.  
+It is a love letter written slowly, softly, and only for you.</p>
+<button id="musicBtn" onclick="toggleMusic()">Play Music 🎶</button>
+</div>
+</section>
+
+<!-- LETTERS -->
+<section id="letters">
+<h1>Letters I Never Sent</h1>
+
+<div class="card">
+<button onclick="reveal('note1')">Open ✉️</button>
+<p id="note1" class="hidden-note">Real love survives miles ❤️</p>
+</div>
+
+<div class="card">
+<button onclick="reveal('note2')">Open ✉️</button>
+<p id="note2" class="hidden-note">One day this distance will be memory 🌙</p>
+</div>
+
+<div class="card">
+<button onclick="reveal('note3')">Open ✉️</button>
+<p id="note3" class="hidden-note">You are my forever ❤️</p>
+</div>
+</section>
+
+<!-- MEMORIES -->
+<section id="gallery">
+<h1>Moments I Treasure</h1>
+
+<div class="card">
+<button onclick="toggleMemories()">Show Memories 📸</button>
+
+<div id="memoryGallery" class="gallery" style="display:none;">
+<img src="./photo1.jpg" onclick="openMemory('The day we laughed nonstop ❤️')">
+<img src="./photo2.jpg" onclick="openMemory('Even silence felt beautiful 🌙')">
+<img src="./photo3.jpg" onclick="openMemory('Forever memory 💫')">
+</div>
+</div>
+</section>
+
+<!-- VIDEO -->
+<section id="video">
+<h1>A Message For You</h1>
+<div class="card">
+<video id="loveVideo" controls playsinline width="80%">
+<source src="./video.mp4" type="video/mp4">
+</video>
+</div>
+</section>
+
+<!-- POPUP -->
+<div id="memoryPopup" class="memory-popup">
+<div class="memory-box">
+<p id="memoryText"></p>
+<button onclick="closeMemory()">Close ❤️</button>
+</div>
+</div>
+
+<script>
+const music=document.getElementById("bgMusic");
+const video=document.getElementById("loveVideo");
+
+let unlocked=false;
+
+/* MOBILE AUDIO UNLOCK */
+function unlockAudio(){
+if(unlocked) return;
+music.volume=0;
+music.play().then(()=>{
+music.pause();
+music.currentTime=0;
+music.volume=.4;
+unlocked=true;
+}).catch(()=>{});
+}
+document.addEventListener("touchstart",unlockAudio,{once:true});
+document.addEventListener("click",unlockAudio,{once:true});
+
+/* MUSIC BUTTON */
+function toggleMusic(){
+if(music.paused){
+music.play().then(()=>{
+musicBtn.innerText="Pause Music ⏸";
+}).catch(()=>alert("Tap again ❤️"));
+}else{
+music.pause();
+musicBtn.innerText="Play Music 🎶";
+}
+}
+
+/* sections */
+function showSection(id){
+document.querySelectorAll("section")
+.forEach(sec=>sec.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+/* letters */
+function reveal(id){
+document.getElementById(id).classList.toggle("show");
+}
+
+/* memories */
+function toggleMemories(){
+const g=document.getElementById("memoryGallery");
+g.style.display=g.style.display==="none"?"flex":"none";
+}
+function openMemory(text){
+memoryText.innerText=text;
+memoryPopup.style.display="flex";
+}
+function closeMemory(){
+memoryPopup.style.display="none";
+}
+
+/* video sync */
+if(video){
+video.addEventListener("play",()=>music.pause());
+video.addEventListener("ended",()=>music.play().catch(()=>{}));
+}
+
+/* hearts */
+setInterval(()=>{
+const heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="❤";
+heart.style.left=Math.random()*100+"%";
+document.querySelector(".hearts").appendChild(heart);
+setTimeout(()=>heart.remove(),8000);
+},600);
+</script>
+
+</body>
+</html>
